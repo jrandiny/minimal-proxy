@@ -1,6 +1,9 @@
 const http = require('http');
+const fs = require('fs');
+
+const conf = JSON.parse(fs.readFileSync('config.json'));
 const { checkAuth, blocklistTest, cookieParser } = require('./common');
-const content_generator = require(`./../configs/template.js`);
+const content_generator = require(`./../${conf.page_template}`);
 
 function routeBlocked(user_res) {
   const page = content_generator({

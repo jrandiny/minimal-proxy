@@ -1,11 +1,12 @@
 {
   "user_db": "configs/user.json",
-  "use_ssl": false,
+  "page_template": "configs/template.js",
   "ssl_key": "configs/key.pem",
   "ssl_cert": "configs/cert.pem",
+  "protocol": "https_bypass",
   "use_auth": true,
-  "assets_loc": "assets",
   "blocklist": [
-    "example.com"
+    "blocked.localhost",
+    "google.com"
   ]
 }
