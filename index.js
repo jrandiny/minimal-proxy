@@ -57,12 +57,15 @@ const server = http.createServer(async (user_req, user_res) => {
   console.log(url);
   console.log(cookies);
 
-  if (proxy_authorization) {
-    const auth_data = Buffer.from(proxy_authorization.split(' ')[1], 'base64').toString();
-    const user_data = auth_data.split(':');
-    console.log(user_data);
+  if (!conf.use_auth || proxy_authorization) {
+    let verified = !conf.use_auth;
+    if (!verified) {
+      const auth_data = Buffer.from(proxy_authorization.split(' ')[1], 'base64').toString();
+      const user_data = auth_data.split(':');
+      verified = user_store.verify(user_data[0], user_data[1]);
+    }
 
-    if (user_store.verify(user_data[0], user_data[1])) {
+    if (verified) {
       if (blocklistTest(url)) {
         routeBlocked(user_res);
       } else {

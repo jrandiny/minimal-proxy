@@ -1,5 +1,7 @@
 {
   "user_db": "user.json",
+  "use_auth": true,
+  "assets_loc": "assets",
   "blocklist": [
     "example.com"
   ]
