@@ -1,5 +1,8 @@
 {
-  "user_db": "user.json",
+  "user_db": "configs/user.json",
+  "use_ssl": false,
+  "ssl_key": "configs/key.pem",
+  "ssl_cert": "configs/cert.pem",
   "use_auth": true,
   "assets_loc": "assets",
   "blocklist": [

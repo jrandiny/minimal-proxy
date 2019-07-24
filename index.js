@@ -1,10 +1,16 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const port = 3000;
 
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const user_store = new (require('./userStore'))(conf.user_db);
-const content_generator = require(`./${conf.assets_loc}/template.js`)
+const content_generator = require(`./${conf.assets_loc}/template.js`);
+const https_conf = {
+  key: conf.ssl_key ? fs.readFileSync(conf.ssl_key) : "",
+  cert: conf.ssl_cert ? fs.readFileSync(conf.ssl_cert) : ""
+};
+
 
 const blocklist_regex = conf.blocklist.map((val) => {
   return new RegExp(val);
@@ -49,7 +55,7 @@ function routeBlocked(user_res) {
   user_res.end();
 }
 
-const server = http.createServer(async (user_req, user_res) => {
+async function handler(user_req, user_res) {
   const url = user_req.url;
   const cookies = cookieParser(user_req.headers.cookie);
   const proxy_authorization = user_req.headers["proxy-authorization"];
@@ -87,11 +93,19 @@ const server = http.createServer(async (user_req, user_res) => {
   } else {
     routeRequestAuth(user_res);
   }
-});
+}
+
+let server;
+
+if (conf.use_ssl) {
+  server = https.createServer(https_conf, handler);
+} else {
+  server = http.createServer(handler);
+}
 
 server.listen(port, (err) => {
   if (err) {
-    return console.log('something bad happened', err);
+    return console.error(err);
   }
 
   console.log(`server is listening on ${port}`);
