@@ -1,0 +1,6 @@
+{
+  "user_db": "user.json",
+  "blocklist": [
+    "example.com"
+  ]
+}
