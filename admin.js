@@ -11,7 +11,7 @@ function printHelp() {
 
 function getUserStore() {
   console.log(`Using ${conf.user_db}`);
-  return new (require('./userStore'))(conf.user_db);
+  return new (require('./src/userStore'))(conf.user_db);
 }
 
 console.log(process.argv);
