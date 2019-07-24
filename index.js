@@ -4,6 +4,7 @@ const port = 3000;
 
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const user_store = new (require('./userStore'))(conf.user_db);
+const content_generator = require(`./${conf.assets_loc}/template.js`)
 
 const blocklist_regex = conf.blocklist.map((val) => {
   return new RegExp(val);
@@ -38,8 +39,13 @@ function routeRequestAuth(user_res) {
 }
 
 function routeBlocked(user_res) {
-  user_res.writeHead(403);
-  user_res.write('403 Forbidden - URL blocked');
+  const page = content_generator({
+    title: 'Blocked',
+    heading: 'Nope',
+    content: 'You are not allowed to access this URL'
+  });
+  user_res.writeHead(403, { 'Content-Type': 'text/html' });
+  user_res.write(page);
   user_res.end();
 }
 
