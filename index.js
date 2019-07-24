@@ -2,10 +2,10 @@ const http = require('http');
 const fs = require('fs');
 const port = 3000;
 
-const user_store = new (require('./userStore'))('user.json');
+const conf = JSON.parse(fs.readFileSync('config.json'));
+const user_store = new (require('./userStore'))(conf.user_db);
 
-const config = JSON.parse(fs.readFileSync('config.json'));
-const blocklist_regex = config.blocklist.map((val) => {
+const blocklist_regex = conf.blocklist.map((val) => {
   return new RegExp(val);
 });
 const blocklistTest = (url) => {
