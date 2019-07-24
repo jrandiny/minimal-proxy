@@ -9,14 +9,14 @@ npm start
 
 Edit `config.json`
 
-```json
+```js
 {
   // File location
   "user_db": "configs/user.json", 
   "page_template": "configs/template.js",
   "ssl_key": "configs/key.pem", // only for https
   "ssl_cert": "configs/cert.pem", // only for https
-  // 
+  // Behaviour
   "protocol": "https_bypass",
   "use_auth": true,
   "blocklist": [
