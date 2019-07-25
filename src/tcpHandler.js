@@ -20,18 +20,23 @@ async function handler(user_req, user_socket, user_bodyhead) {
         proxy_socket.pipe(
           user_socket, { end: true }
         );
-        proxy_socket.on('error', () => {
-          if (user_socket) {
-            user_socket.end();
-          }
-        });
       });
-      user_socket.pipe(proxy_socket, { end: true });
-      user_socket.on('error', () => {
+
+      proxy_socket.on('error', (error) => {
+        console.error('tcp-proxy', error);
+        if (user_socket) {
+
+          user_socket.end();
+        }
+      });
+
+      user_socket.on('error', (error) => {
+        console.error('tcp-user', error)
         if (proxy_socket) {
           proxy_socket.end();
         }
       });
+      user_socket.pipe(proxy_socket, { end: true });
     }
   }
 }
