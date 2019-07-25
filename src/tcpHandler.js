@@ -25,7 +25,6 @@ async function handler(user_req, user_socket, user_bodyhead) {
       proxy_socket.on('error', (error) => {
         console.error('tcp-proxy', error);
         if (user_socket) {
-
           user_socket.end();
         }
       });
@@ -38,6 +37,12 @@ async function handler(user_req, user_socket, user_bodyhead) {
       });
       user_socket.pipe(proxy_socket, { end: true });
     }
+  } else {
+    user_socket.write([
+      'HTTP/1.1 407 Proxy Authentication Required',
+      'Proxy-Authenticate: Basic realm=proxy', '', ''
+    ].join('\r\n'));
+    user_socket.end();
   }
 }
 
