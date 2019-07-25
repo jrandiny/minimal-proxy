@@ -1,7 +1,8 @@
 const net = require('net');
-const { checkAuth, blocklistTest } = require('./common');
+const { checkAuth } = require('./common');
+const { processTcpPre } = require('./plugin');
 
-async function handler(user_req, user_socket, _user_bodyhead) {
+async function handler(user_req, user_socket, user_bodyhead) {
   const [hostname, port] = user_req.url.split(':');
   const proxy_authorization = user_req.headers["proxy-authorization"];
 
@@ -9,13 +10,9 @@ async function handler(user_req, user_socket, _user_bodyhead) {
   console.log(proxy_authorization);
 
   if (checkAuth(proxy_authorization)) {
-    if (blocklistTest(hostname)) {
-      user_socket.write([
-        'HTTP/1.1 303 See Other',
-        'Location: http://blocked.localhost', ''
-      ].join('\r\n'));
-      user_socket.end();
-    } else {
+    const temp_return = processTcpPre(user_req, user_socket, user_bodyhead);
+    if (temp_return) {
+      [user_req, user_socket, user_bodyhead] = temp_return;
       const proxy_socket = net.connect(port, hostname, () => {
         user_socket.write([
           'HTTP/1.1 200 Connection Established', '', ''

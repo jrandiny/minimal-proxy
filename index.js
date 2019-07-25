@@ -6,6 +6,9 @@ const port = 3000;
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const tcpHandler = require('./src/tcpHandler');
 const httpHandler = require('./src/httpHandler');
+const plugin = require('./src/plugin');
+
+plugin.load();
 
 const https_conf = {
   key: conf.ssl_key ? fs.readFileSync(conf.ssl_key) : "",

@@ -2,19 +2,8 @@ const http = require('http');
 const fs = require('fs');
 
 const conf = JSON.parse(fs.readFileSync('config.json'));
-const { checkAuth, blocklistTest, cookieParser } = require('./common');
-const content_generator = require(`./../${conf.page_template}`);
-
-function routeBlocked(user_res) {
-  const page = content_generator({
-    title: 'Blocked',
-    heading: 'Nope',
-    content: 'You are not allowed to access this URL'
-  });
-  user_res.writeHead(403, { 'Content-Type': 'text/html' });
-  user_res.write(page);
-  user_res.end();
-}
+const { checkAuth, cookieParser } = require('./common');
+const { processHttpPre } = require('./plugin');
 
 async function handler(user_req, user_res) {
   const user_url = user_req.url;
@@ -25,9 +14,9 @@ async function handler(user_req, user_res) {
   console.log(cookies);
 
   if (checkAuth(proxy_authorization)) {
-    if (blocklistTest(user_url)) {
-      routeBlocked(user_res);
-    } else {
+    const temp_return = processHttpPre(user_req, user_res);
+    if (temp_return) {
+      [user_req, user_res] = temp_return;
       let proxy_req = http.request(user_url, (proxy_res) => {
         user_res.writeHead(proxy_res.statusCode, proxy_res.headers);
 
@@ -39,6 +28,7 @@ async function handler(user_req, user_res) {
       user_req.pipe(proxy_req, {
         end: true
       });
+
     }
   } else {
     user_res.writeHead(407, {

@@ -3,15 +3,6 @@ const fs = require('fs');
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const user_store = new (require('./userStore'))(conf.user_db);
 
-const blocklist_regex = conf.blocklist.map((val) => {
-  return new RegExp(val);
-});
-const blocklistTest = (url) => {
-  return blocklist_regex.some((val) => {
-    return val.test(url);
-  });
-};
-
 function cookieParser(cookie_string) {
   if (cookie_string) {
     const cookie_arr = cookie_string.split('; ');
@@ -42,4 +33,4 @@ function checkAuth(proxy_authorization) {
   return verified;
 }
 
-module.exports = { checkAuth, cookieParser, blocklistTest }
+module.exports = { checkAuth, cookieParser }
