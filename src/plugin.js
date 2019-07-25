@@ -16,16 +16,16 @@ function load() {
     console.log(`Loading ${directory}`);
     const temp_conf = require(path.resolve(plugin_location, directory, 'index'));
 
-    if (temp_conf.http_pre) {
-      http_pre_chain.push(temp_conf.http_pre);
+    if (temp_conf.httpPre) {
+      http_pre_chain.push(temp_conf.httpPre);
     }
 
-    if (temp_conf.tcp_pre) {
-      tcp_pre_chain.push(temp_conf.tcp_pre);
+    if (temp_conf.tcpPre) {
+      tcp_pre_chain.push(temp_conf.tcpPre);
     }
 
-    if (temp_conf.http_post) {
-      http_post_chain.push(temp_conf.http_post);
+    if (temp_conf.httpPost) {
+      http_post_chain.push(temp_conf.httpPost);
     }
 
     if (temp_conf.contentGenerator) {

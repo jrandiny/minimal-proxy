@@ -16,7 +16,7 @@ const blocklistTest = (url) => {
 
 const conf = {
   contentGenerator: (cg) => { contentGenerator = cg },
-  http_pre: (user_req, user_res) => {
+  httpPre: (user_req, user_res) => {
     const user_url = user_req.url;
     if (blocklistTest(user_url)) {
       const page = contentGenerator({
@@ -32,8 +32,8 @@ const conf = {
       return [user_req, user_res];
     }
   },
-  http_post: false,
-  tcp_pre: (user_req, user_socket, user_bodyhead) => {
+  httpPost: false,
+  tcpPre: (user_req, user_socket, user_bodyhead) => {
     const [hostname] = user_req.url.split(':');
     if (blocklistTest(hostname)) {
       user_socket.write([
