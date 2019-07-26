@@ -6,8 +6,8 @@ async function handler(user_req, user_socket, user_bodyhead) {
   const [hostname, port] = user_req.url.split(':');
   const proxy_authorization = user_req.headers["proxy-authorization"];
 
-  console.log(hostname, port);
-  console.log(proxy_authorization);
+  // console.log(hostname, port);
+  // console.log(proxy_authorization);
 
   if (checkAuth(proxy_authorization)) {
     const temp_return = processTcpPre(user_req, user_socket, user_bodyhead);

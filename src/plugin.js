@@ -3,10 +3,13 @@ const path = require('path');
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const contentGenerator = require(path.resolve(conf.page_template));
 
+const { Transform } = require('stream');
+
 const plugin_location = 'plugins';
 
 const http_pre_chain = [];
-const http_post_chain = [];
+const http_post_body_chain = [];
+const http_post_header_chain = [];
 const tcp_pre_chain = [];
 
 function load() {
@@ -24,8 +27,12 @@ function load() {
       tcp_pre_chain.push(temp_conf.tcpPre);
     }
 
-    if (temp_conf.httpPost) {
-      http_post_chain.push(temp_conf.httpPost);
+    if (temp_conf.httpPostBody) {
+      http_post_body_chain.push(temp_conf.httpPostBody);
+    }
+
+    if (temp_conf.httpPostHeader) {
+      http_post_header_chain.push(temp_conf.httpPostHeader);
     }
 
     if (temp_conf.contentGenerator) {
@@ -50,7 +57,30 @@ function processHttpPre(req, res) {
   }
 }
 
-function processHttpPost(req, res) {
+class processHttpPostBody extends Transform {
+  constructor(user_res) {
+    super()
+    this.user_res = user_res;
+  }
+
+  _transform(chunk, enc, done) {
+    http_post_body_chain.forEach((transformer) => {
+      chunk = transformer(chunk);
+    });
+
+    this.push(chunk);
+    done();
+  }
+}
+
+function processHttpPostHeader(status, header) {
+  let end_process;
+  http_post_header_chain.every((handler) => {
+    const temp_return = handler(status, header);
+    [status, header, end_process] = temp_return;
+    return !end_process;
+  });
+  return [status, header, end_process];
 
 }
 
@@ -70,4 +100,4 @@ function processTcpPre(req, socket, headbody) {
   }
 }
 
-module.exports = { load, processHttpPre, processTcpPre, contentGenerator };
+module.exports = { load, processHttpPre, processTcpPre, processHttpPostBody, processHttpPostHeader, contentGenerator };

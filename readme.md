@@ -45,10 +45,22 @@ Required exported parameter
 module.exports = {
   httpPre: (req,res)=>{
     // Function executed on http request
+    return [req,res]; // Pass request to the next chain
+    return false; // Stop request
   },
   tcpPre: (req,socket,headbody)=>{
     // Function executed on tcp request (https_bypass mode)
+    return [req, socket, headbody] // Pass request to the next chain
+    return false; // Stop request
   },
+  httpPostHeader: (status, header)=>{
+    // Function executed on http request, 
+    return [status, header, end_process] // Set end_chain to true to stop request (e.g. redirection)
+  },
+  httpPostTransform: (chunk)=>{
+    // Function executed on EVERY http request body, including non html content (e.g. images)
+    return chunk;
+  }
   contentGenerator: (contentGenerator)=>{
     // Called by plugin subsystem on load
     // Give plugin access to contentGenerator

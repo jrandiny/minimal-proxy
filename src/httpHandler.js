@@ -5,25 +5,31 @@ const path = require('path');
 const conf = JSON.parse(fs.readFileSync('config.json'));
 const contentGenerator = require(path.resolve(conf.page_template));
 const { checkAuth, cookieParser } = require('./common');
-const { processHttpPre } = require('./plugin');
+const { processHttpPre, processHttpPostBody, processHttpPostHeader } = require('./plugin');
 
 async function handler(user_req, user_res) {
   const user_url = user_req.url;
   const cookies = cookieParser(user_req.headers.cookie);
   const proxy_authorization = user_req.headers["proxy-authorization"];
 
-  console.log(user_url);
-  console.log(cookies);
+  // console.log(user_url);
+  // console.log(cookies);
 
   if (checkAuth(proxy_authorization)) {
     const temp_return = processHttpPre(user_req, user_res);
     if (temp_return) {
       [user_req, user_res] = temp_return;
       let proxy_req = http.request(user_url, (proxy_res) => {
-        user_res.writeHead(proxy_res.statusCode, proxy_res.headers);
-        proxy_res.pipe(user_res, {
-          end: true
-        });
+        const [new_status, new_header, discard_body] = processHttpPostHeader(proxy_res.statusCode, proxy_res.headers);
+        user_res.writeHead(new_status, new_header);
+
+        if (!discard_body) {
+          proxy_res.pipe(new processHttpPostBody(user_res)).pipe(user_res, {
+            end: true
+          });
+        } else {
+          user_res.end();
+        }
       });
 
       proxy_req.on('error', (error) => {
