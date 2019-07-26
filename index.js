@@ -1,9 +1,10 @@
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const port = 3000;
 
 const conf = JSON.parse(fs.readFileSync('config.json'));
+
+const port = conf.port;
 const tcpHandler = require('./src/tcpHandler');
 const httpHandler = require('./src/httpHandler');
 const plugin = require('./src/plugin');

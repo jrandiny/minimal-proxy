@@ -18,6 +18,7 @@ Edit `config.json`
   "ssl_cert": "configs/cert.pem", // only for https
   // Behaviour
   "protocol": "https_bypass",
+  "port": 8080,
   "use_auth": true
 }
 

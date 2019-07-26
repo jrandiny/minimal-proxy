@@ -4,5 +4,6 @@
   "ssl_key": "configs/key.pem",
   "ssl_cert": "configs/cert.pem",
   "protocol": "https_bypass",
+  "port": 8080,
   "use_auth": true
 }
