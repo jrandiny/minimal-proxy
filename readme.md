@@ -24,6 +24,26 @@ Edit `config.json`
 
 ```
 
+#### User configuration
+
+If authentication is used, use the admin script to manager user
+
+```bash
+npm run admin                  
+```
+
+The admin script support the following operations
+```                                    
+add_user <username> <password>   - Add new user
+delete_user <username>           - Delete user                                                                          
+help                             - Print this help
+```
+ **Example**
+ ``` bash
+ npm run admin add_user username password
+ ```
+
+
 ### Protocol
 
 This proxy server support 3 protocol mode
